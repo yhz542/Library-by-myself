@@ -1,0 +1,102 @@
+#include<stdio.h>
+#include<stdbool.h>
+#include<stdlib.h>//分离链接表 
+typedef int ElementType ;
+typedef int Index ;
+typedef struct LNode *PtrToLNode ;
+struct LNode
+{
+        ElementType Data;
+        PtrToLNode Next;
+};
+typedef PtrToLNode Position ;
+typedef PtrToLNode List ;
+typedef struct TblNode *HashTable ;
+struct TblNode
+{
+        int TableSize ;
+        List Heads ;
+};
+HashTable CreateTable( int TableSize )
+{
+        HashTable H ;
+        int i ;
+        H = ( HashTable )malloc( sizeof( struct TblNode ) ) ;
+        H->TableSize = TableSize ;
+        H->Heads = ( List )malloc( sizeof( struct LNode) * TableSize ) ;
+        for( i = 0 ; i < TableSize ; i++ )
+        {
+                H->Heads[i].Data = -1 ;
+                H->Heads[i].Next = NULL ;
+        }
+        return H ;
+}
+Position Find( HashTable H , ElementType Key )//查找如果找不到返回NULL;
+{
+        Position P ;
+        Index Pos ;
+        Pos = Key % H->TableSize ;
+        P = H->Heads[ Pos ].Next ;
+        while( P &&  P->Data - Key  )
+                P = P->Next ;
+        return P ;
+}
+bool Insert( HashTable H , ElementType Key )
+{
+        Position P , NewCell ;
+        Index Pos;
+        P = Find( H , Key ) ;
+        if( !P )
+        {
+                NewCell = ( Position )malloc( sizeof(struct LNode ) ) ;
+                NewCell->Data = Key  ;
+                Pos = Key%H->TableSize ;
+                NewCell->Next = H->Heads[Pos].Next;//插入链表的第一个
+                H->Heads[Pos].Next = NewCell ;
+                return true ;
+        }
+        else
+        {
+                printf("关键词已存在");
+                return false ;
+        }
+}
+bool Delete( HashTable H , ElementType Key )//删除失败返回false
+{
+        Position P ;
+        Position Former , Later ;
+        Index Pos ;
+        Pos = Key % H->TableSize ;
+        Former = &( H->Heads[ Pos ]) ;
+        P = H->Heads[ Pos ].Next ;
+        while( P && P->Data - Key  )
+        {
+                Former = P;
+                P = P->Next ;
+        }
+        if(!P)
+                return false ;
+        else
+        {
+                Former->Next = P->Next ;
+                free( P ) ;
+                return true ;
+        }
+}
+void DestoryTable( HashTable H )
+{
+        int i;
+        Position P , Tmp ;
+        for( i = 0 ; i < H->TableSize ; i++ )
+        {
+                P = H->Heads[i].Next ;
+                while( P )
+                {
+                        Tmp = P->Next ;
+                        free( P ) ;
+                        P = Tmp ;
+                }
+        }
+        free( H->Heads ) ;
+        free( H ) ;
+}
