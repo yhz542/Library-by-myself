@@ -20,3 +20,17 @@ bool IsPrime( int Num )
                 return false;
         return true;
 }
+
+
+bool IsPrime(long long Num)//更好的方法。质数一定是被6整除余1或者余5的数(1除外)
+{
+	if (Num <= 3)
+		return Num > 1;
+	if (Num % 6 != 1 && Num % 6 != 5)
+		return false;
+	long long range = (long long)sqrt(Num);
+	for (int i = 5; i < range; i += 6)
+		if (Num%i == 0 || Num % (i + 2) == 0)
+			return false;
+	return true;
+}
