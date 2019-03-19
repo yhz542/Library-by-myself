@@ -23,8 +23,28 @@ AVLTree DoubleLeftRightRotation( AVLTree );
 AVLTree DoubleRightLeftRotation( AVLTree );
 AVLTree Insert( AVLTree , ElementType X ) ;
 //平衡二叉树自适应插入
+AVLTree FindMax( AVLTree ) ;
+AVLTree FindMin( AVLTree ) ;
+AVLTree Delete( AVLTree , ElementType ) ;
+//平衡二叉树自适应删除
 int main(void)
 {
+        int amount = 0 ;
+        scanf("%d" ,&amount ) ;
+        AVLTree T = NULL ;
+        for ( int i = 0 , tem ; i < amount ; ++i )
+        {
+                scanf("%d" , &tem ) ;
+                T = Insert( T , tem ) ;
+        }
+        printf("输入删除元素:");
+        scanf("%d",&amount);
+        T=Delete(T,amount);//注意删除操作的用法.
+        PreOrderTraversal( T ) ;
+        putchar('\n') ;
+        InOrderTraversal( T ) ;
+        putchar('\n') ;
+        PostOrderTraversal( T ) ;
         return 0 ;
 }
 void PreOrderTraversal( AVLTree BT )
@@ -111,7 +131,7 @@ AVLTree Insert( AVLTree T , ElementType X )
         if(!T)//如果当前为空树，创建并插入子节点
         {
                 T=(AVLTree)malloc(sizeof( struct TreeNode ) );
-                T->Data = X;
+                T->Data = X ;
                 T->Height = 0 ;
                 T->Left = T->Right = NULL;
         }
@@ -133,7 +153,91 @@ AVLTree Insert( AVLTree T , ElementType X )
                         else
                                 T = DoubleRightLeftRotation( T ) ;
         }
-        T->Height = Max( GetHeight( T->Left ) , GetHeight( T->Right ) ) + 1 ;
+        T->Height = Max( GetHeight( T->Left ) , GetHeight( T->Right ) ) + 1 ;//左右两边的最大高度加上自身这一层
         return T ;
 }
 //每次插入点只会将路径上的所有节点高度加一，不在路径上的节点不做任何操作。
+AVLTree FindMax( AVLTree T )
+{
+        if ( T )
+                while( T->Right )
+                        T = T->Right ;
+        return T ;
+}
+AVLTree FindMin( AVLTree T )
+{
+        if ( T )
+                while( T->Left )
+                        T = T->Left ;
+        return T ;
+}
+AVLTree Delete( AVLTree T , ElementType X )
+{
+        if ( !T )
+        {
+                printf("无此节点！") ;
+                return NULL ;
+        }
+        else if ( X < T->Data )
+        {
+                T->Left = Delete( T->Left , X ) ;
+                if( GetHeight(T->Left) - GetHeight( T->Right ) == -2 )//右边较高
+                {
+                        if ( GetHeight( T->Right->Right ) >= GetHeight( T->Right->Left ) )
+                                T = SingleRightRotation( T ) ;
+                        else
+                                T = DoubleRightLeftRotation( T ) ;
+                }
+        }
+        else if ( X > T->Data )
+        {
+                T->Right = Delete( T->Right , X ) ;
+                if( GetHeight( T->Left ) - GetHeight( T->Right ) == 2 )
+                {
+                        if ( GetHeight( T->Left->Left ) >= GetHeight( T->Left->Right ) )
+                                T = SingleLeftRotation( T ) ;
+                        else
+                                T = DoubleLeftRightRotation( T ) ;
+                }
+        }
+        else
+        {
+
+                if ( T->Left && T->Right )//左右子树都存在
+                {
+                        int LeftHeight = GetHeight( T->Left ) ;
+                        int RightHeight = GetHeight( T->Right ) ;
+                        if ( LeftHeight > RightHeight )
+                        {
+                                ElementType Tem = FindMax( T->Left )->Data ;
+                                T->Left = Delete( T->Left , Tem ) ;
+                                T->Data = Tem ;
+                        }
+                        else
+                        {
+                                ElementType Tem = FindMin( T->Right )->Data ;
+                                T->Right = Delete( T->Right , Tem ) ;
+                                T->Data = Tem ;
+                        }
+                }
+                else if ( T->Left )
+                {
+                        AVLTree New = T->Left ;
+                        free( T ) ;
+                        return New ;
+                }
+                else if ( T->Right )
+                {
+                        AVLTree New = T->Right ;
+                        free( T ) ;
+                        return New ;
+                }
+                else
+                {
+                        free( T ) ;
+                        return NULL ;
+                }
+        }
+        T->Height = Max( GetHeight( T->Left ) , GetHeight( T->Right ) ) + 1 ;
+        return T ;
+}
