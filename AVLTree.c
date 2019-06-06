@@ -209,13 +209,13 @@ AVLTree Delete( AVLTree T , ElementType X )
                         int RightHeight = GetHeight( T->Right ) ;
                         if ( LeftHeight > RightHeight )
                         {
-                                ElementType Tem = FindMax( T->Left )->Data ;
-                                T->Left = Delete( T->Left , Tem ) ;
-                                T->Data = Tem ;
-                        }
+                                ElementType Tem = FindMax( T->Left )->Data ;//找到左子树中值最大的结点并获取它的值
+                                T->Left = Delete( T->Left , Tem ) ;//删除该结点
+                                T->Data = Tem ;//将找到的当前结点存储的值设置为左子树中的最大值
+                        }//这一步的思想是偷梁换柱，删除当前结点后用左子树的最大结点进行代替。因为高度可能会下降，所以用较高的树进行删除操作。
                         else
                         {
-                                ElementType Tem = FindMin( T->Right )->Data ;
+                                ElementType Tem = FindMin( T->Right )->Data ;//与上步同理。
                                 T->Right = Delete( T->Right , Tem ) ;
                                 T->Data = Tem ;
                         }
