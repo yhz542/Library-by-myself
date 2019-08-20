@@ -35,4 +35,4 @@ void bufwrite(char *p,int n)
     p += k ;
   }
 }
-//显然n越大，提升的效果越好
+//显然N越大，提升的效果越好
