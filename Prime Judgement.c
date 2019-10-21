@@ -30,7 +30,8 @@ bool IsPrime(long long Num)//更好的方法。质数一定是被6整除余1或�
 		return false;
 	long long range = (long long)sqrt(Num);
 	for (int i = 5; i < range; i += 6)
-		if (Num%i == 0 || Num % (i + 2) == 0)
+		if (Num%i == 0 || Num % (i + 2) == 0)//%i 表示6x+5 %(i+2)表示 6x+7也就是6x+1
 			return false;
 	return true;
 }
+//https://blog.csdn.net/afei__/article/details/80638460
