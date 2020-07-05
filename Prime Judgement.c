@@ -8,9 +8,9 @@ bool IsPrime( int Num )
                 return false ;
         int Max = ( int )sqrt( Num ) ;
         Max = (Max % 2) ? Max : Max - 1 ;
-        for ( int i = 7 ; i <= Max ; i += 4 )
+        for ( int i = 7 ; i <= Max ; i += 2 )
         {
-                for( int j = 0 ; j < 3 ; j++ , i+=2 )
+                for( int j = 0 ; j < 4 ; j++ , i+=2 )
                 {
                         if( !( Num % i) )
                                 return false;
