@@ -1,4 +1,4 @@
-#include<vector>//这里使用的dijkstra方法只适用于稀疏图 ，本方法使用的邻接表以及堆优化，同时这里计算的是有向图的最短点到点的距离
+#include<vector>//这里使用的dijkstra方法只适用于稀疏图 ，本方法使用的邻接矩阵以及堆优化，同时这里计算的是有向图的最短点到点的距离
 #include<iostream>
 #include<algorithm>
 #include<set>
@@ -92,3 +92,94 @@ int main()
 
 //总结：只有确定图是稀疏图时才考虑使用堆优化,并且这时候图建议使用邻接表的表示方法。
 //如果是稠密图或者更多的未知情况，个人还是更倾向于使用数组法以及邻接矩阵表示法。
+
+
+//采用邻接表以及堆优化，稀疏图最优解
+#include<vector>
+#include<iostream>
+#include<algorithm>
+#include<set>
+#include<queue>
+#include<forward_list>
+using namespace std;
+struct nodeInfo//堆中存放的数据
+{
+	int node;
+	int distance;
+	bool operator>(const nodeInfo& other)const
+	{
+		return this->distance > other.distance;
+	}
+};
+class Graph//采用堆方法，适合稀疏图
+{
+#define INFINITE 65535//设置的无穷值 用于初始化
+	int numOfNode,numOfEdge;//点的数目 与边的数目
+	int startNode,destination;//起始点与目的地
+	vector<forward_list<nodeInfo>> G;//邻接表法，适合存储稀疏图
+	vector<int> pred;//最短路径上，每个点的前一个结点
+	vector<int> shortest;//存储起始点到每个点的距离
+public:
+	Graph()
+	{
+		cin >> numOfNode>>numOfEdge;//设置点的个数与边的个数
+		cin >> startNode >> destination;//设置起始点与目的地
+		shortest.resize(numOfNode, INFINITE);//初始化shortest将所有点到远点的距离设置为无穷
+		pred.resize(numOfNode, -1);//初始化，设置所有点的前一个点为-1
+		G.resize(numOfNode);//图的初始化
+		int node1, node2,lenOfEdge;
+		for (size_t i = 0; i < numOfEdge; ++i)//读入边长
+		{
+			cin >> node1 >> node2 >> lenOfEdge;//读入点1 点2 以及两点间的距离
+			G[node1].insert_after(G[node1].before_begin(), { node2, lenOfEdge });//设置距离，这里假设的是有向图，如果是无向图，则反方向也需要设置
+		}
+	}
+	void Dijkstra()
+	{
+		priority_queue<nodeInfo,vector<nodeInfo>,greater<nodeInfo>> heap;
+		vector<bool> visited(numOfNode, false);//设置一个数组用于判别当前点是否已经访问过。
+		shortest[startNode] = 0;//设置起始点到自己的距离为0
+		heap.push({ startNode,shortest[startNode] });//将起始点的数据塞入堆中
+		int curNode;
+		while (heap.size())//如果堆中无数据则说明已遍历完最短路径上所有可抵达的点
+		{
+			curNode = heap.top().node;//从堆中取出距离最小的点
+			//if(curNode == destination) //如果只需要求点到点之间的距离可以加上这一句
+			//	break;
+			heap.pop();
+			if (visited[curNode])//如果当前点已经访问过，且堆中还有其他数据，则直接跳过本次处理继续取点。
+				continue;
+			visited[curNode] = true;//将取出的点设置为已访问
+			for (auto linkNode:G[curNode])//遍历当前点的所有边
+			{
+				if (shortest[curNode] + linkNode.distance < shortest[linkNode.node])//如果经过本点到其他点的路径距离可以缩短
+				{
+					shortest[linkNode.node] = shortest[curNode] + linkNode.distance;
+					pred[linkNode.node] = curNode;//设置最短路径上其他点的前一个结点为本节点
+					heap.push({ linkNode.node,shortest[linkNode.node] });//将更新后的其他结点数据塞入堆中
+				}
+			}
+		}
+	}
+	void Print()//输出路径
+	{
+		vector<int> path;
+		path.reserve(numOfNode);
+		int cur = destination;
+		while (cur != -1)//将路径上的点逆序放入path数组中
+		{
+			path.push_back(cur);
+			cur = pred[cur];
+		}
+		reverse(path.begin(), path.end());//逆转path数组得到正序
+		cout << shortest[destination] << endl;//输出起始点到目标点的距离
+		for (auto elem : path)//输出
+			cout << elem << ' ';
+	}
+};
+int main()
+{
+	Graph question;
+	question.Dijkstra();
+	question.Print();
+}
