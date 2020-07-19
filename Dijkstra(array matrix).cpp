@@ -89,3 +89,15 @@ int main()
 	question.Dijkstra();
 	question.Print();
 }
+/***************
+Dijkstra算法思想及步骤
+shortest[i]表示从起始点到点i的最短路径,pred[i]表示在这条最短路径上出现在顶点i之前的顶点。
+对于起始点s来说，shortest[s]=0,pred[s]=null(这里null用-1代替).如果从起点到i之前没有路径
+那么shortest[i] = INFINITE，表示路径长度无穷大,同时pred[i]=null.
+步骤:
+1.对于除了起点之外的任何顶点i,shortest[i]均被赋值为INFINITE,将shortest[s]设置为0(s代表起点),对于所有点i，设置pred[i]=null
+2.让集合Q包含所有点。(这里由于只针对点对点，所以并没有按步骤的方法)
+3.只要Q不为空，执行以下操作:
+  A.在集合Q中找出shortest最小的点，并将该点从集合中移除
+  B.对于每个与A中点相邻接的顶点v,执行Relax操作（即如果从该点到v的距离比shortest[v]更短，就更新)
+****************/
