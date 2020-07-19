@@ -1,4 +1,4 @@
-#include<vector>//这里使用的dijkstra方法只适用于稀疏图 ，本方法使用的邻接表以及堆优化
+#include<vector>//这里使用的dijkstra方法只适用于稀疏图 ，本方法使用的邻接表以及堆优化，同时这里计算的是有向图的最短点到点的距离
 #include<iostream>
 #include<algorithm>
 #include<set>
