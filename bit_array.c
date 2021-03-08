@@ -24,6 +24,7 @@ void assign_bit(char bit_array[],unsigned bit_number,int value)
                 clear_bit(bit_array,bit_number);
         }
 }
+//如果指定位不是0，就返回真，否则返回假
 int test_bit(char bit_array[],unsigned bit_number)
 {
         int result = 0;
