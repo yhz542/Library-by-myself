@@ -7,7 +7,7 @@ void bufwrite(char *p , int n)// 每读取一个字符判断两次
 {
   while(--n >= 0 )
   {
-    if(bufptr == bufptr + N ) 
+    if(bufptr == buffer + N ) 
       flushbuffer();
     *bufptr++ = *p++;
   }
@@ -27,8 +27,8 @@ void bufwrite(char *p,int n)
   {
     if( bufptr == buffer + N )
       flushbuffer();
-    rem = N - (bufptr - buffer) ;
-    k = n > rem ? rem : n ;
+    rem = N - (bufptr - buffer) ;//计算剩余字符数
+    k = n > rem ? rem : n ;//k代表写入的字符长度
     memcpy( bufptr , p , k );
     bufptr += k ;
     n -= k;
